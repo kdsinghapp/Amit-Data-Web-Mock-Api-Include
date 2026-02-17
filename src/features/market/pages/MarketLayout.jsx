@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import clsx from "clsx";
 
@@ -16,21 +16,66 @@ const marketItems = [
 export default function MarketLayout({ active, items, subItems = [], children }) {
   const baseItems = items || marketItems;
   const [open, setOpen] = useState(() => new Set());
+  const [subItemsMap, setSubItemsMap] = useState(() => ({}));
+  const acRef = useRef(null);
 
-  const toggle = (to) => {
+  useEffect(() => {
+    return () => {
+      if (acRef.current) {
+        acRef.current.abort();
+        acRef.current = null;
+      }
+    };
+  }, []);
+
+  const toggle = (it) => {
+    const to = it.to || it.key || it.label;
     setOpen((prev) => {
       const next = new Set(prev);
       if (next.has(to)) next.delete(to);
       else next.add(to);
       return next;
     });
+
+    // If expanding and an apiEndpoint is available and we don't have cached subitems, fetch them.
+    const willExpand = !open.has(to);
+    if (willExpand && it.apiEndpoint && !subItemsMap[it.key]) {
+      if (acRef.current) acRef.current.abort();
+      const ac = new AbortController();
+      acRef.current = ac;
+
+      fetch(it.apiEndpoint, { signal: ac.signal })
+        .then((res) => res.json())
+        .then((json) => {
+          const entries = json?.Data || json?.data || json || {};
+          const parsed = Object.keys(entries).map((k) => {
+            const e = entries[k] || {};
+            return {
+              label: k,
+              to: e.path ? `/data/market${e.path}` : e.path || e.to || "#",
+            };
+          });
+          setSubItemsMap((prev) => ({ ...prev, [it.key]: parsed }));
+        })
+        .catch(() => {
+          setSubItemsMap((prev) => ({ ...prev, [it.key]: [] }));
+        })
+        .finally(() => {
+          acRef.current = null;
+        });
+    }
   };
 
   const itemsWithChildren = baseItems.map((it) => {
-    if (!subItems || !subItems.length) return it;
-    const isActiveCategory = it.to === active || (active && active.startsWith(it.to));
-    const isExpanded = isActiveCategory || open.has(it.to);
-    return isExpanded ? { ...it, children: subItems } : it;
+    // Normalize item keys
+    const key = it.key || (it.to ? it.to : it.label?.toLowerCase().replace(/\s+/g, "-"));
+    const normalized = { key, ...it };
+    // Compute children: prefer top-level `subItems` prop (global), otherwise per-item fetched children
+    const itemChildren = (subItems && subItems.length) ? subItems : subItemsMap[key];
+    if (!itemChildren || !itemChildren.length) return normalized;
+    const isActiveCategory = (normalized.to === active) || (active && active.startsWith(normalized.to));
+    const isExpanded = isActiveCategory || open.has(normalized.to || normalized.key);
+    return isExpanded ? { ...normalized, children: itemChildren } : normalized;
   });
 
   return (
@@ -41,33 +86,49 @@ export default function MarketLayout({ active, items, subItems = [], children })
         <div className="mt-3">
           <div className="bg-white rounded-md border border-slate-100 overflow-hidden">
             {itemsWithChildren.map((it, idx) => {
-              const isActiveCategory = it.to === active || (active && active.startsWith(it.to));
-              const isExpanded = isActiveCategory || open.has(it.to);
+              const identifier = it.to || it.key;
+              const isActiveCategory = it.to === active || (active && it.to && active.startsWith(it.to));
+              const isExpanded = isActiveCategory || open.has(it.to || it.key);
 
               return (
-                <div key={it.to} className={idx === 0 ? "" : "border-t border-slate-100"}>
+                <div key={identifier} className={idx === 0 ? "" : "border-t border-slate-100"}>
                   <div className="flex items-center justify-between">
-                    <NavLink
-                      to={it.to}
-                      className={({ isActive }) =>
-                        clsx(
-                          "flex-1 block px-4 py-2 text-sm truncate transition-colors",
-                          isActive || isActiveCategory
-                            ? "bg-slate-100 text-slate-900 font-semibold"
-                            : "text-slate-700 hover:bg-slate-50"
-                        )
-                      }
-                    >
-                      <span className="flex items-center justify-between">
-                        <span>{it.label}</span>
-                      </span>
-                    </NavLink>
+                    {it.to ? (
+                      <NavLink
+                        to={it.to}
+                        className={({ isActive }) =>
+                          clsx(
+                            "flex-1 block px-4 py-2 text-sm truncate transition-colors",
+                            isActive || isActiveCategory
+                              ? "bg-slate-100 text-slate-900 font-semibold"
+                              : "text-slate-700 hover:bg-slate-50"
+                          )
+                        }
+                      >
+                        <span className="flex items-center justify-between">
+                          <span>{it.label}</span>
+                        </span>
+                      </NavLink>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => toggle(it)}
+                        className={clsx(
+                          "flex-1 text-left px-4 py-2 text-sm truncate transition-colors",
+                          isActiveCategory ? "bg-slate-100 text-slate-900 font-semibold" : "text-slate-700 hover:bg-slate-50"
+                        )}
+                      >
+                        <span className="flex items-center justify-between">
+                          <span>{it.label}</span>
+                        </span>
+                      </button>
+                    )}
 
                     <button
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        toggle(it.to);
+                        toggle(it);
                       }}
                       aria-expanded={isExpanded}
                       className="px-3 py-2 text-slate-400 hover:text-slate-600"

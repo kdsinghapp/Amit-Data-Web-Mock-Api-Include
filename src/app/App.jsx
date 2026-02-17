@@ -61,9 +61,9 @@ export default function App() {
         <Route path="/checkout/success" element={<CheckoutSuccess />} />
 
         {/* Data -> Market */}
-        <Route path="/data/market/equities" element={<MarketEquities />} />
+        <Route path="/equity" element={<MarketEquities />} />
         <Route path="/data/market/equities/:regionKey" element={<MarketEquities />} />
-        <Route path="/data/market/futures" element={<MarketFutures />} />
+        <Route path="/futures" element={<MarketFutures />} />
         <Route path="/data/market/futures/:regionKey" element={<MarketFutures />} />
         <Route path="/data/market/:category" element={<MarketPlaceholder />} />
         <Route path="/data/market/:category/:regionKey" element={<MarketPlaceholder />} />
