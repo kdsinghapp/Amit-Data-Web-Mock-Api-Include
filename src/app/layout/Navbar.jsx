@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Database, Phone, ShoppingCart } from "lucide-react";
 import clsx from "clsx";
 
@@ -23,7 +23,7 @@ export default function Navbar() {
   const [openData, setOpenData] = useState(false);
   const [segment, setSegment] = useState("Business");
   const [topNav, setTopNav] = useState(null);
-
+  const navigate = useNavigate();
   const containerRef = useRef(null);
   const location = useLocation();
   const cart = useCart();
@@ -57,8 +57,15 @@ export default function Navbar() {
           };
         });
 
-        const hasMegaData = items.some((it) => it.key === "data" && it.kind === "mega");
-        const withData = hasMegaData ? items : [{ key: "data", label: "Data", to: "/BusData", kind: "mega" }, ...items];
+        const hasMegaData = items.some(
+          (it) => it.key === "data" && it.kind === "mega",
+        );
+        const withData = hasMegaData
+          ? items
+          : [
+              { key: "data", label: "Data", to: "/BusData", kind: "mega" },
+              ...items,
+            ];
 
         setTopNav(withData);
       })
@@ -87,8 +94,15 @@ export default function Navbar() {
       };
     });
 
-    const hasMegaData = items.some((it) => it.key === "data" && it.kind === "mega");
-    const withData = hasMegaData ? items : [{ key: "data", label: "Data", to: "/BusData", kind: "mega" }, ...items];
+    const hasMegaData = items.some(
+      (it) => it.key === "data" && it.kind === "mega",
+    );
+    const withData = hasMegaData
+      ? items
+      : [
+          { key: "data", label: "Data", to: "/BusData", kind: "mega" },
+          ...items,
+        ];
 
     setTopNav(withData);
   }, [menuData, segment]);
@@ -103,7 +117,9 @@ export default function Navbar() {
     const dataEntry = menuData?.tabs?.[segKey]?.Data;
     const endpoint =
       dataEntry?.apiEndpoint ||
-      (segment === "Business" ? "http://localhost:3001/business-Data" : "http://localhost:3001/professional-data");
+      (segment === "Business"
+        ? "http://localhost:3001/business-Data"
+        : "http://localhost:3001/professional-data");
 
     fetch(endpoint, { signal: ac.signal })
       .then((res) => res.json())
@@ -133,14 +149,20 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setSegment("Business")}
-              className={clsx("hover:text-white", segment === "Business" && "text-white")}
+              className={clsx(
+                "hover:text-white",
+                segment === "Business" && "text-white",
+              )}
             >
               Business
             </button>
             <button
               type="button"
               onClick={() => setSegment("Individuals")}
-              className={clsx("hover:text-white", segment === "Individuals" && "text-white")}
+              className={clsx(
+                "hover:text-white",
+                segment === "Individuals" && "text-white",
+              )}
             >
               Individuals
             </button>
@@ -191,7 +213,9 @@ export default function Navbar() {
                         onClick={() => setOpenData((v) => !v)}
                         className={clsx(
                           "px-3 py-2 rounded-lg text-sm font-medium transition",
-                          openData ? "bg-white/10 text-white" : "text-slate-200/90 hover:bg-white/5 hover:text-white"
+                          openData
+                            ? "bg-white/10 text-white"
+                            : "text-slate-200/90 hover:bg-white/5 hover:text-white",
                         )}
                       >
                         {item.label}
@@ -202,11 +226,20 @@ export default function Navbar() {
                   return (
                     <NavLink
                       key={item.key}
-                      to={item.to}
+                      to={item.to || "/"}
+                      onClick={(e) => {
+                        if (item.to) {
+                          e.preventDefault();
+                          navigate(item.to);
+                          setOpenData(false);
+                        }
+                      }}
                       className={({ isActive }) =>
                         clsx(
                           "px-3 py-2 rounded-lg text-sm font-medium transition",
-                          isActive ? "bg-white/10 text-white" : "text-slate-200/90 hover:bg-white/5 hover:text-white"
+                          isActive
+                            ? "bg-white/10 text-white"
+                            : "text-slate-200/90 hover:bg-white/5 hover:text-white",
                         )
                       }
                     >
@@ -240,7 +273,11 @@ export default function Navbar() {
         </div>
 
         <div className="relative">
-          <MegaMenu open={openData} onClose={() => setOpenData(false)} items={megaItems} />
+          <MegaMenu
+            open={openData}
+            onClose={() => setOpenData(false)}
+            items={megaItems}
+          />
         </div>
       </div>
     </header>

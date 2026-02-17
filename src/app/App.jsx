@@ -84,8 +84,8 @@ export default function App() {
         <Route path="/data/coverage/:region" element={<CoveragePlaceholder />} />
 
         {/* Top nav placeholders */}
-        <Route path="/developers" element={<Developers />} />
-        <Route path="/products" element={<Placeholder />} />
+        <Route path="/BusAPI" element={<Developers />} />
+        <Route path="/BusProducts" element={<Placeholder />} />
         <Route path="/company" element={<CompanyPage />} />
         <Route path="/support" element={<SupportPage />} />
         <Route path="/data/services" element={<Placeholder />} />
