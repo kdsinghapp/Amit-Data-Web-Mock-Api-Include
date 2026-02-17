@@ -1,0 +1,448 @@
+{
+  "info": {
+    "_postman_id": "616df07e-279b-4b3e-b0ea-2f2eee23b76f",
+    "name": "MockData-App",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "1164167",
+    "_collection_link": "https://go.postman.co/collection/1164167-616df07e-279b-4b3e-b0ea-2f2eee23b76f?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "http://localhost:3001/menu",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3001/menu",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3001",
+          "path": [
+            "menu"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "http://localhost:3001/menu",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"tabs\": {\r\n        \"Business\": {\r\n            \"Selected\": true,\r\n            \"Data\": {\r\n                \"path\": \"/BusData\",\r\n                \"component\": \"DataPage\",\r\n                \"apiEndpoint\": \"http://localhost:3001/business-data\"\r\n                \r\n            },\r\n            \"Products\": {\r\n                \"path\": \"/BusProducts\",\r\n                \"component\": \"ProductsPage\",\r\n                \"apiEndpoint\": \"http://localhost:3001/business-product\"\r\n            },\r\n            \"API\": {\r\n                \"path\": \"/BusAPI\",\r\n                \"component\": \"DevelopersPage\",\r\n                \"apiEndpoint\": \"http://localhost:3001/business-developers\"\r\n            },\r\n            \"Company\": {\r\n                \"path\": \"/Company\",\r\n                \"component\": \"CompanyPage\",\r\n                \"apiEndpoint\": \"http://localhost:3001/business-company\"\r\n            },\r\n            \"Support\": {\r\n                \"path\": \"/Support\",\r\n                \"component\": \"SupportPage\",\r\n                \"apiEndpoint\": \"http://localhost:3001/business-support\"\r\n            }\r\n        },\r\n        \"Professional\": {\r\n            \"Data\": {\r\n                \"path\": \"/ProData\",\r\n                \"component\": \"ProDataPage\",\r\n                \"apiEndpoint\": \"http://localhost:3001/professional-data\"\r\n            },\r\n            \"Platforms\": null,\r\n            \"Company\": {\r\n                \"path\": \"/Company\",\r\n                \"component\": \"CompanyPage\",\r\n                \"apiEndpoint\": \"http://localhost:3001/professional-company\"\r\n            },\r\n            \"Support\": {\r\n                \"path\": \"/Support\",\r\n                \"component\": \"SupportPage\",\r\n                \"apiEndpoint\": \"http://localhost:3001/professional-Support\"\r\n            }\r\n        }\r\n    },\r\n    \"Order\": {\r\n        \"OrderData\": {\r\n            \"path\": \"/OrderData\",\r\n            \"component\": \"OrderDataPage\",\r\n            \"apiEndpoint\": \"http://localhost:3001/OrderDataPage\"\r\n        }\r\n    }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3001/menu",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "menu"
+              ]
+            }
+          },
+          "_postman_previewlanguage": "",
+          "header": [],
+          "cookie": [
+            {
+              "expires": "Invalid Date",
+              "domain": "",
+              "path": ""
+            }
+          ],
+          "body": ""
+        }
+      ]
+    },
+    {
+      "name": "http://localhost:3001/business-Data",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3001/business-Data",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3001",
+          "path": [
+            "business-Data"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "http://localhost:3001/business-Data",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3001/business-Data",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "business-Data"
+              ]
+            }
+          },
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [
+            {
+              "expires": "Invalid Date",
+              "domain": "",
+              "path": ""
+            }
+          ],
+          "body": "{\r\n  \"Data\": {\r\n    \"Market Data\": {\r\n      \"path\": \"/MarketData\",\r\n      \"component\": \"MarketDataPage\",\r\n      \"apiEndpoint\": \"http://localhost:3001/business-marketdata\"\r\n    },\r\n    \"Reference Data\": {\r\n      \"path\": \"/ReferenceData\",\r\n      \"component\": \"ReferenceDataPage\",\r\n      \"apiEndpoint\": \"http://localhost:3001/business-referencedata\"\r\n    },\r\n    \"Data Analytics\": {\r\n      \"path\": \"/DataAnalytics\",\r\n      \"component\": \"DataAnalyticsPage\",\r\n      \"apiEndpoint\": \"http://localhost:3001/business-dataanalytics\"\r\n    },\r\n    \"Coverage\": {\r\n      \"path\": \"/Coverage\",\r\n      \"component\": \"CoveragePage\",\r\n      \"apiEndpoint\": \"http://localhost:3001/business-coverage\"\r\n    },\r\n    \"Data Services\": {\r\n      \"path\": \"/DataServices\",\r\n      \"component\": \"DataServicesPage\",\r\n      \"apiEndpoint\": \"http://localhost:3001/business-dataservices\"\r\n    },\r\n    \"News Feeds\":{\r\n       \"path\": \"/NewsFeeds\",\r\n      \"component\": \"NewsFeeds\",\r\n      \"apiEndpoint\": \"http://localhost:3001/business-newsfeeds\"\r\n    }\r\n  }\r\n}\r\n"
+        }
+      ]
+    },
+    {
+      "name": "http://localhost:3001/business-marketdata",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3001/business-marketdata",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3001",
+          "path": [
+            "business-marketdata"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "http://localhost:3001/business-Data Copy",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3001/business-Data",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "business-Data"
+              ]
+            }
+          },
+          "_postman_previewlanguage": null,
+          "header": null,
+          "cookie": [],
+          "body": null
+        }
+      ]
+    },
+    {
+      "name": "http://localhost:3001/business-referencedata",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3001/business-referencedata",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3001",
+          "path": [
+            "business-referencedata"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "http://localhost:3001/business-referencedata",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3001/business-referencedata",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "business-referencedata"
+              ]
+            }
+          },
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [
+            {
+              "expires": "Invalid Date",
+              "domain": "",
+              "path": ""
+            }
+          ],
+          "body": "{\r\n  \"Data\": {\r\n    \"Global Fundamentals\": {\r\n      \"path\": \"/MarketData\",\r\n      \"component\": \"MarketDataPage\",\r\n      \"apiEndpoint\": \"http://localhost:3001/business-globalfundamental\"\r\n    },\r\n    \"Corporate Action\": {\r\n      \"path\": \"/ReferenceData\",\r\n      \"component\": \"ReferenceDataPage\",\r\n      \"apiEndpoint\": \"http://localhost:3001/business-corporateaction\"\r\n    },\r\n    \"Treding Schedules\": {\r\n      \"path\": \"/DataAnalytics\",\r\n      \"component\": \"DataAnalyticsPage\",\r\n      \"apiEndpoint\": \"http://localhost:3001/business-tredingschedules\"\r\n    }\r\n  }\r\n}\r\n"
+        }
+      ]
+    },
+    {
+      "name": "http://localhost:3001/business-dataanalytics",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3001/business-dataanalytics",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3001",
+          "path": [
+            "business-dataanalytics"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "http://localhost:3001/business-dataanalytics",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3001/business-dataanalytics",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "business-dataanalytics"
+              ]
+            }
+          },
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [
+            {
+              "expires": "Invalid Date",
+              "domain": "",
+              "path": ""
+            }
+          ],
+          "body": "{\r\n  \"Data\": {\r\n    \"Options Analytics\": {\r\n      \"path\": \"/MarketData\",\r\n      \"component\": \"OptionsAnalytics\",\r\n      \"apiEndpoint\": \"http://localhost:3001/business-dataanalytics-optionsanalytics\"\r\n    },\r\n    \"Greeks and Implied Volatility\": {\r\n      \"path\": \"/ReferenceData\",\r\n      \"component\": \"GreeksVolatility\",\r\n      \"apiEndpoint\": \"http://localhost:3001/business-dataanalytics-greeksvolatility\"\r\n    },\r\n    \"Market Indication\": {\r\n      \"path\": \"/DataAnalytics\",\r\n      \"component\": \"MarketIndication\",\r\n      \"apiEndpoint\": \"http://localhost:3001/business-dataanalytics-marketindication\"\r\n    }\r\n  }\r\n}\r\n"
+        }
+      ]
+    },
+    {
+      "name": "http://localhost:3001/business-coverage",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3001/business-coverage",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3001",
+          "path": [
+            "business-coverage"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "http://localhost:3001/business-coverage",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3001/business-coverage",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "business-coverage"
+              ]
+            }
+          },
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [
+            {
+              "expires": "Invalid Date",
+              "domain": "",
+              "path": ""
+            }
+          ],
+          "body": "{\r\n  \"Data\": {\r\n    \"India\": {\r\n      \"path\": \"/India\",\r\n      \"component\": \"IndiaPage\",\r\n      \"apiEndpoint\": \"http://localhost:3001/business-coverage-india\"\r\n    },\r\n    \"United States\": {\r\n      \"path\": \"/UnitedStates\",\r\n      \"component\": \"UnitedStatesPage\",\r\n      \"apiEndpoint\": \"http://localhost:3001/business-coverage-unitedstates\"\r\n    },\r\n    \"Canada\": {\r\n      \"path\": \"/canada\",\r\n      \"component\": \"CanadaPage\",\r\n      \"apiEndpoint\": \"http://localhost:3001/business-coverage-canada\"\r\n    },\r\n    \"Turkey\": {\r\n      \"path\": \"/Turkey\",\r\n      \"component\": \"TurkeyPage\",\r\n      \"apiEndpoint\": \"http://localhost:3001/business-coverage-Turkey\"\r\n    }\r\n  }\r\n}\r\n"
+        }
+      ]
+    },
+    {
+      "name": "http://localhost:3001/business-dataservice",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3001/business-dataservice",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3001",
+          "path": [
+            "business-dataservice"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "http://localhost:3001/business-dataservice",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3001/business-dataservice",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "business-dataservice"
+              ]
+            }
+          },
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [
+            {
+              "expires": "Invalid Date",
+              "domain": "",
+              "path": ""
+            }
+          ],
+          "body": "{\r\n  \"Data\": {\r\n    \"Data Service\": {\r\n      \"path\": \"/dataservice\",\r\n      \"component\": \"DataServicePage\",\r\n      \"apiEndpoint\": \"http://localhost:3001/business-dataservice-DataServices\"\r\n    }\r\n  }\r\n}\r\n"
+        }
+      ]
+    },
+    {
+      "name": "http://localhost:3001/business-newsfeeds",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3001/business-newsfeeds",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3001",
+          "path": [
+            "business-newsfeeds"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "http://localhost:3001/business-newsfeeds",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3001/business-newsfeeds",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "business-newsfeeds"
+              ]
+            }
+          },
+          "_postman_previewlanguage": "",
+          "header": [],
+          "cookie": [
+            {
+              "expires": "Invalid Date",
+              "domain": "",
+              "path": ""
+            }
+          ],
+          "body": "{\r\n  \"Data\": {\r\n    \"News Feeds\": {\r\n      \"path\": \"/newsfeeds\",\r\n      \"component\": \"NewsFeeds\",\r\n      \"apiEndpoint\": \"http://localhost:3001/business-newsfeeds-newsfeeds\"\r\n    }\r\n  }\r\n}"
+        }
+      ]
+    }
+  ]
+}

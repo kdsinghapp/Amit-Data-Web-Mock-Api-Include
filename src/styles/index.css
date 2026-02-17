@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; }
+
+@layer base {
+  html, body { height: 100%; }
+  body { font-feature-settings: "ss01" 1, "cv02" 1; }
+}
+
+@layer components {
+  /* Dark UI blocks (navbar + mega menu) */
+  .dark-panel {
+    @apply bg-slate-950 text-slate-100 border border-white/10;
+  }
+  .dark-surface {
+    @apply bg-blue-950 text-slate-100 border border-white/10;
+  }
+  .dark-item {
+    @apply flex items-center justify-between rounded-lg px-3 py-2 text-sm text-slate-200/90 hover:bg-white/5 hover:text-white transition;
+  }
+  .dark-item-active { @apply text-orange-400; }
+  .dark-divider { @apply border-l border-white/10; }
+
+  /* Light pages */
+  .page-surface { @apply bg-white rounded-2xl border border-slate-200 shadow-sm; }
+  .page-sidebar { @apply bg-slate-50 rounded-xl border border-slate-200; }
+  .page-item { @apply flex items-center justify-between rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 transition; }
+  .page-item-active { @apply bg-blue-950 text-white hover:bg-blue-950; }
+
+  .chip { @apply inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-medium; }
+  .chip-orange { @apply border-orange-200 bg-orange-50 text-orange-700; }
+  .chip-slate { @apply border-slate-200 bg-slate-50 text-slate-700; }
+}

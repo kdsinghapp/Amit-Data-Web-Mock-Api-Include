@@ -1,0 +1,281 @@
+{
+  "description": "Dynamic analytics: form is driven by config; each tab can render multiple tables.",
+  "groups": [
+    {
+      "key": "constituent",
+      "label": "Constituent",
+      "tabs": [
+        {
+          "key": "current",
+          "label": "Current",
+          "endpoint": "/indices/constituent/current",
+          "fields": [
+            {
+              "key": "index",
+              "label": "Index",
+              "type": "text",
+              "required": true,
+              "defaultValue": "IBC50",
+              "placeholder": "IBC50",
+              "colSpan": 2
+            },  
+            {
+              "key": "market",
+              "label": "Market",
+              "type": "select",
+              "required": true,
+              "colSpan": 2,
+              "options": [
+                { "key": "IN", "label": "India" },
+                { "key": "US", "label": "USA" },
+                { "key": "EU", "label": "Europe" }
+              ]
+            },
+            {
+              "key": "limit",
+              "label": "Limit",
+              "type": "number",
+              "defaultValue": 10,
+              "min": 1,
+              "max": 50,
+              "step": 1,
+              "colSpan": 2
+            },
+            {
+              "key": "includeWeights",
+              "label": "Include Weights",
+              "type": "checkbox",
+              "defaultValue": true,
+              "colSpan": 3
+            },
+            {
+              "key": "sector",
+              "label": "Sector",
+              "type": "select",
+              "colSpan": 3,
+              "options": [
+                { "key": "", "label": "All" },
+                { "key": "FIN", "label": "Financials" },
+                { "key": "TECH", "label": "Technology" },
+                { "key": "ENERGY", "label": "Energy" }
+              ]
+            }
+          ],
+          "tables": [
+            {
+              "key": "constituents",
+              "title": "Constituents",
+              "dataKey": "rows",
+              "columns": [
+                { "key": "symbol", "title": "Symbol" },
+                { "key": "name", "title": "Company" },
+                { "key": "sector", "title": "Sector" },
+                { "key": "weight", "title": "Weight %" }
+              ]
+            },
+            {
+              "key": "summary",
+              "title": "Summary",
+              "dataKey": "summary",
+              "columns": [
+                { "key": "k", "title": "Key" },
+                { "key": "v", "title": "Value" }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "historical",
+          "label": "Historical",
+          "endpoint": "/indices/constituent/historical",
+          "fields": [
+            {
+              "key": "index",
+              "label": "Index",
+              "type": "text",
+              "required": true,
+              "defaultValue": "IBC50",
+              "colSpan": 2
+            },
+            {
+              "key": "fromDate",
+              "label": "From",
+              "type": "date",
+              "required": true,
+              "colSpan": 2
+            },
+            {
+              "key": "toDate",
+              "label": "To",
+              "type": "date",
+              "required": true,
+              "colSpan": 2
+            },
+            {
+              "key": "frequency",
+              "label": "Frequency",
+              "type": "select",
+              "defaultValue": "daily",
+              "colSpan": 2,
+              "options": [
+                { "key": "daily", "label": "Daily" },
+                { "key": "weekly", "label": "Weekly" },
+                { "key": "monthly", "label": "Monthly" }
+              ]
+            }
+          ],
+          "tables": [
+            {
+              "key": "series",
+              "title": "Index Time Series",
+              "dataKey": "rows",
+              "columns": [
+                { "key": "date", "title": "Date" },
+                { "key": "close", "title": "Close" },
+                { "key": "changePct", "title": "Change %" }
+              ]
+            },
+            {
+              "key": "stats",
+              "title": "Stats",
+              "dataKey": "stats",
+              "columns": [
+                { "key": "k", "title": "Metric" },
+                { "key": "v", "title": "Value" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "nodejs",
+      "label": "Nodejs",
+      "tabs": [
+        {
+          "key": "example",
+          "label": "Example",
+          "endpoint": "/indices/Nodejs/example",
+          "fields": [
+            {
+              "key": "rawJson",
+              "label": "Raw JSON",
+              "type": "json",
+              "defaultValue": {
+                "foo": "bar",
+                "count": 3,
+                "items": [
+                  { "id": 1, "name": "alpha" },
+                  { "id": 2, "name": "beta" },
+                  { "id": 3, "name": "gamma" }
+                ]
+              },
+              "colSpan": 6
+            },
+            {
+              "key": "curlExample",
+              "label": "cURL Example",
+              "type": "code",
+              "defaultValue": "curl -X POST https://api.example.com/v1/search -H \"Content-Type: application/json\" -d '{\"q\":\"term\"}'",
+              "colSpan": 6
+            }
+          ],
+          "tables": [
+            {
+              "key": "response",
+              "title": "Response",
+              "dataKey": "rows",
+              "columns": []
+            }
+          ]
+        }
+      ]
+    },
+     {
+      "key": "Python",
+      "label": "Python",
+      "tabs": [
+        {
+          "key": "example",
+          "label": "Example",
+          "endpoint": "/indices/Python/example",
+          "fields": [
+            {
+              "key": "rawJson",
+              "label": "Raw JSON",
+              "type": "json",
+              "defaultValue": {
+                "foo": "bar",
+                "count": 3,
+                "items": [
+                  { "id": 1, "name": "alpha" },
+                  { "id": 2, "name": "beta" },
+                  { "id": 3, "name": "gamma" }
+                ]
+              },
+              "colSpan": 6
+            },
+            {
+              "key": "curlExample",
+              "label": "cURL Example",
+              "type": "code",
+              "defaultValue": "curl -X POST https://api.example.com/v1/search -H \"Content-Type: application/json\" -d '{\"q\":\"term\"}'",
+              "colSpan": 6
+            }
+          ],
+          "tables": [
+            {
+              "key": "response",
+              "title": "Response",
+              "dataKey": "rows",
+              "columns": []
+            }
+          ]
+        }
+      ]
+    },
+      {
+      "key": "Java",
+      "label": "Java",
+      "tabs": [
+        {
+          "key": "example",
+          "label": "Example",
+          "endpoint": "/indices/Python/example",
+          "fields": [
+            {
+              "key": "rawJson",
+              "label": "Raw JSON",
+              "type": "json",
+              "defaultValue": {
+                "foo": "bar",
+                "count": 3,
+                "items": [
+                  { "id": 1, "name": "alpha" },
+                  { "id": 2, "name": "beta" },
+                  { "id": 3, "name": "gamma" }
+                ]
+              },
+              "colSpan": 6
+            },
+            {
+              "key": "curlExample",
+              "label": "cURL Example",
+              "type": "code",
+              "defaultValue": "curl -X POST https://api.example.com/v1/search -H \"Content-Type: application/json\" -d '{\"q\":\"term\"}'",
+              "colSpan": 6
+            }
+          ],
+          "tables": [
+            {
+              "key": "response",
+              "title": "Response",
+              "dataKey": "rows",
+              "columns": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
