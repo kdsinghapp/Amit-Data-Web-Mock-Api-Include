@@ -1,10 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { Database, Phone, ShoppingCart } from "lucide-react";
 import clsx from "clsx";
 
 import MegaMenu from "./MegaMenu.jsx";
-import { api } from "../../api/platformApi.js";
 import { useCart } from "../../data/cart.jsx";
 import { useBillingRegion } from "../../data/billingRegion.jsx";
 
@@ -19,153 +18,164 @@ function useClickOutside(ref, onOutside) {
   }, [ref, onOutside]);
 }
 
+const MENU_URL = "http://localhost:3001/menu";
+
+function getTabLabel(tabKey, tabObj) {
+  return (
+    tabObj?.label ||
+    tabObj?.displayLabel ||
+    tabObj?.displayName ||
+    tabObj?.title ||
+    tabKey
+  );
+}
+
+function pickInitialSegment(tabs) {
+  const entries = Object.entries(tabs || {});
+  const selected = entries.find(
+    ([, v]) => v && typeof v === "object" && v.Selected,
+  );
+  return (selected && selected[0]) || (entries[0] && entries[0][0]) || null;
+}
+
+function buildTopNavForSegment(menuData, segment) {
+  const segObj = menuData?.tabs?.[segment] || {};
+  const rawEntries = Object.entries(segObj);
+
+  return rawEntries
+    .filter(([k, v]) => {
+      if (k === "Selected") return false;
+      if (!v) return false;
+      if (typeof v !== "object") return false;
+      if (!v.path) return false;
+      return true;
+    })
+    .map(([k, v]) => {
+      const key = String(k).toLowerCase();
+      const isMega = v.kind === "mega" || v.mega === true || key === "data";
+      return {
+        key,
+        label: v.label || k,
+        to: v.path,
+        kind: isMega ? "mega" : undefined,
+        apiEndpoint: v.apiEndpoint || null,
+      };
+    });
+}
+
+function extractMegaEntries(json) {
+  const entries =
+    json?.DataContext?.Data || json?.Data || json?.data || json || {};
+
+  return Object.keys(entries).map((k) => {
+    const e = entries[k] || {};
+    return {
+      key: String(k).toLowerCase().replace(/\s+/g, "-"),
+      label: e.label || k,
+      to: e.path || null,
+      apiEndpoint: e.apiEndpoint || null,
+    };
+  });
+}
+
 export default function Navbar() {
   const [openData, setOpenData] = useState(false);
-  const [segment, setSegment] = useState("Business");
-  const [topNav, setTopNav] = useState(null);
-  const navigate = useNavigate();
+
+  const [menuData, setMenuData] = useState(null);
+  const [segment, setSegment] = useState(null);
+
+  const [megaItems, setMegaItems] = useState(null);
+
   const containerRef = useRef(null);
   const location = useLocation();
   const cart = useCart();
   const billing = useBillingRegion();
-  const [menuData, setMenuData] = useState(null);
-  const [megaItems, setMegaItems] = useState(null);
 
   useEffect(() => setOpenData(false), [location.pathname, location.search]);
   useClickOutside(containerRef, () => setOpenData(false));
 
-  // Load top navigation from API only.
   useEffect(() => {
     const ac = new AbortController();
 
-    fetch("http://localhost:3001/menu", { signal: ac.signal })
+    fetch(MENU_URL, { signal: ac.signal })
       .then((res) => res.json())
       .then((json) => {
         setMenuData(json);
-        // compute initial topNav for current segment
-        const segKey = segment === "Business" ? "Business" : "Professional";
-        const tabs = json?.tabs?.[segKey] || {};
-        const items = Object.keys(tabs).map((k) => {
-          const entry = tabs[k];
-          if (!entry) return { key: k.toLowerCase(), label: k, to: null };
-          const isData = k === "Data";
-          return {
-            key: k.toLowerCase(),
-            label: k,
-            to: entry.path || "/",
-            kind: isData ? "mega" : undefined,
-          };
-        });
-
-        const hasMegaData = items.some(
-          (it) => it.key === "data" && it.kind === "mega",
-        );
-        const withData = hasMegaData
-          ? items
-          : [
-              { key: "data", label: "Data", to: "/BusData", kind: "mega" },
-              ...items,
-            ];
-
-        setTopNav(withData);
+        const initial = pickInitialSegment(json?.tabs || {});
+        setSegment(initial);
       })
       .catch(() => {
-        setTopNav([]);
         setMenuData(null);
+        setSegment(null);
       });
 
     return () => ac.abort();
   }, []);
 
-  // recompute topNav whenever segment changes (keeps menu in sync)
-  useEffect(() => {
-    if (!menuData) return;
-    const segKey = segment === "Business" ? "Business" : "Professional";
-    const tabs = menuData.tabs?.[segKey] || {};
-    const items = Object.keys(tabs).map((k) => {
-      const entry = tabs[k];
-      if (!entry) return { key: k.toLowerCase(), label: k, to: null };
-      const isData = k === "Data";
-      return {
-        key: k.toLowerCase(),
-        label: k,
-        to: entry.path || "/",
-        kind: isData ? "mega" : undefined,
-      };
-    });
+  const segments = useMemo(() => {
+    const tabs = menuData?.tabs || {};
+    return Object.entries(tabs).filter(([, v]) => v && typeof v === "object");
+  }, [menuData]);
 
-    const hasMegaData = items.some(
-      (it) => it.key === "data" && it.kind === "mega",
-    );
-    const withData = hasMegaData
-      ? items
-      : [
-          { key: "data", label: "Data", to: "/BusData", kind: "mega" },
-          ...items,
-        ];
-
-    setTopNav(withData);
+  const topNav = useMemo(() => {
+    if (!menuData || !segment) return [];
+    return buildTopNavForSegment(menuData, segment);
   }, [menuData, segment]);
 
-  // Fetch mega menu items when the Data menu opens (or when segment changes and open)
+  const orderCta = useMemo(() => {
+    const o = menuData?.Order?.OrderData;
+    if (!o || typeof o !== "object") return null;
+    return {
+      label: o.label || "Order Data",
+      to: o.path || "/",
+    };
+  }, [menuData]);
+
+  const dataEntry = useMemo(() => {
+    return topNav.find((x) => x.key === "data") || null;
+  }, [topNav]);
+
   useEffect(() => {
     if (!openData) return;
+    if (!dataEntry?.apiEndpoint) {
+      setMegaItems(null);
+      return;
+    }
+
     const ac = new AbortController();
 
-    // Prefer using the apiEndpoint from /menu if present
-    const segKey = segment === "Business" ? "Business" : "Professional";
-    const dataEntry = menuData?.tabs?.[segKey]?.Data;
-    const endpoint =
-      dataEntry?.apiEndpoint ||
-      (segment === "Business"
-        ? "http://localhost:3001/business-Data"
-        : "http://localhost:3001/professional-data");
-
-    fetch(endpoint, { signal: ac.signal })
+    fetch(dataEntry.apiEndpoint, { signal: ac.signal })
       .then((res) => res.json())
-      .then((json) => {
-        const entries = json?.Data || json || {};
-        const parsed = Object.keys(entries).map((k) => {
-          const e = entries[k] || {};
-          return {
-            key: k.toLowerCase().replace(/\s+/g, "-"),
-            label: k,
-            to: e.path || null,
-            apiEndpoint: e.apiEndpoint || null,
-          };
-        });
-        setMegaItems(parsed);
-      })
+      .then((json) => setMegaItems(extractMegaEntries(json)))
       .catch(() => setMegaItems(null));
 
     return () => ac.abort();
-  }, [openData, segment, menuData]);
+  }, [openData, dataEntry?.apiEndpoint]);
 
   return (
     <header className="sticky top-0 z-50 bg-blue-950 text-blue-50 border-b border-blue-300/15">
       <div ref={containerRef} className="mx-auto max-w-6xl px-4">
         <div className="hidden sm:flex items-center justify-between py-2 text-xs text-slate-300/70">
           <div className="flex items-center gap-4">
-            <button
-              type="button"
-              onClick={() => setSegment("Business")}
-              className={clsx(
-                "hover:text-white",
-                segment === "Business" && "text-white",
-              )}
-            >
-              Business
-            </button>
-            <button
-              type="button"
-              onClick={() => setSegment("Individuals")}
-              className={clsx(
-                "hover:text-white",
-                segment === "Individuals" && "text-white",
-              )}
-            >
-              Individuals
-            </button>
+            {segments.length > 0
+              ? segments.map(([key, obj]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => {
+                      setSegment(key);
+                      setOpenData(false);
+                      setMegaItems(null);
+                    }}
+                    className={clsx(
+                      "hover:text-white",
+                      segment === key && "text-white",
+                    )}
+                  >
+                    {getTabLabel(key, obj)}
+                  </button>
+                ))
+              : null}
           </div>
 
           <div className="flex items-center gap-3">
@@ -184,12 +194,14 @@ export default function Navbar() {
               </select>
             </div>
 
-            <Link
-              to="/subscription"
-              className="rounded-md bg-orange-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-orange-400"
-            >
-              Order Data
-            </Link>
+            {orderCta ? (
+              <Link
+                to={orderCta.to}
+                className="rounded-md bg-orange-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-orange-400"
+              >
+                {orderCta.label}
+              </Link>
+            ) : null}
           </div>
         </div>
 
@@ -202,52 +214,44 @@ export default function Navbar() {
           </Link>
 
           <nav className="flex items-center gap-1">
-            {topNav
-              ? topNav.map((item) => {
-                  if (item.kind === "mega") {
-                    return (
-                      <button
-                        key={item.key}
-                        type="button"
-                        onMouseEnter={() => setOpenData(true)}
-                        onClick={() => setOpenData((v) => !v)}
-                        className={clsx(
-                          "px-3 py-2 rounded-lg text-sm font-medium transition",
-                          openData
-                            ? "bg-white/10 text-white"
-                            : "text-slate-200/90 hover:bg-white/5 hover:text-white",
-                        )}
-                      >
-                        {item.label}
-                      </button>
-                    );
-                  }
+            {topNav.map((item) => {
+              if (item.kind === "mega") {
+                return (
+                  <button
+                    key={item.key}
+                    type="button"
+                    onMouseEnter={() => setOpenData(true)}
+                    onClick={() => setOpenData((v) => !v)}
+                    className={clsx(
+                      "px-3 py-2 rounded-lg text-sm font-medium transition",
+                      openData
+                        ? "bg-white/10 text-white"
+                        : "text-slate-200/90 hover:bg-white/5 hover:text-white",
+                    )}
+                  >
+                    {item.label}
+                  </button>
+                );
+              }
 
-                  return (
-                    <NavLink
-                      key={item.key}
-                      to={item.to || "/"}
-                      onClick={(e) => {
-                        if (item.to) {
-                          e.preventDefault();
-                          navigate(item.to);
-                          setOpenData(false);
-                        }
-                      }}
-                      className={({ isActive }) =>
-                        clsx(
-                          "px-3 py-2 rounded-lg text-sm font-medium transition",
-                          isActive
-                            ? "bg-white/10 text-white"
-                            : "text-slate-200/90 hover:bg-white/5 hover:text-white",
-                        )
-                      }
-                    >
-                      {item.label}
-                    </NavLink>
-                  );
-                })
-              : null}
+              return (
+                <NavLink
+                  key={item.key}
+                  to={item.to || "/"}
+                  onClick={() => setOpenData(false)}
+                  className={({ isActive }) =>
+                    clsx(
+                      "px-3 py-2 rounded-lg text-sm font-medium transition",
+                      isActive
+                        ? "bg-white/10 text-white"
+                        : "text-slate-200/90 hover:bg-white/5 hover:text-white",
+                    )
+                  }
+                >
+                  {item.label}
+                </NavLink>
+              );
+            })}
           </nav>
 
           <Link
