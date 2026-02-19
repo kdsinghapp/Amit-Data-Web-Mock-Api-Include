@@ -2,22 +2,17 @@ import React, { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import clsx from "clsx";
 
-const marketItems = [
-  { label: "Equities & ETFs", to: "/data/market/equities" },
-  { label: "Futures", to: "/data/market/futures" },
-  { label: "Options", to: "/data/market/options" },
-  { label: "Indices", to: "/data/market/indices" },
-  { label: "Fixed income", to: "/data/market/fixed-income" },
-  { label: "Forex", to: "/data/market/forex" },
-  { label: "Cryptocurrencies", to: "/data/market/crypto" },
-  { label: "Spot", to: "/data/market/spot" },
-];
-
-export default function MarketLayout({ active, items, subItems = [], children }) {
-  const baseItems = items || marketItems;
+export default function MarketLayout({
+  active,
+  items,
+  subItems = [],
+  children,
+}) {
   const [open, setOpen] = useState(() => new Set());
   const [subItemsMap, setSubItemsMap] = useState(() => ({}));
-  const acRef = useRef(null);
+  const acRef = useRef(null); // used for subitems fetches
+  const itemsAcRef = useRef(null); // used for top-level items fetch
+  const [fetchedItems, setFetchedItems] = useState(null);
 
   useEffect(() => {
     return () => {
@@ -25,8 +20,48 @@ export default function MarketLayout({ active, items, subItems = [], children })
         acRef.current.abort();
         acRef.current = null;
       }
+      if (itemsAcRef.current) {
+        itemsAcRef.current.abort();
+        itemsAcRef.current = null;
+      }
     };
   }, []);
+
+  // Fetch top-level market items from API when `items` prop not provided
+  useEffect(() => {
+    if (items) return;
+    // avoid refetch if already fetched
+    if (fetchedItems !== null) return;
+
+    const endpoint = "http://localhost:3001/business-marketdata";
+    const ac = new AbortController();
+    itemsAcRef.current = ac;
+
+    fetch(endpoint, { signal: ac.signal })
+      .then((res) => res.json())
+      .then((json) => {
+        const entries = json?.Data || json?.data || json || {};
+        const parsed = Object.keys(entries).map((k) => {
+          const e = entries[k] || {};
+          const key = (k || "").toLowerCase().replace(/\s+/g, "-");
+          const to = e.path ? `${e.path}` : e.path || e.to || "#";
+          return {
+            key,
+            label: k,
+            to,
+            apiEndpoint:
+              e.apiEndpoint || e.endpoint || e.childrenEndpoint || null,
+          };
+        });
+        setFetchedItems(parsed);
+      })
+      .catch(() => {
+        setFetchedItems([]);
+      })
+      .finally(() => {
+        itemsAcRef.current = null;
+      });
+  }, [items, fetchedItems]);
 
   const toggle = (it) => {
     const to = it.to || it.key || it.label;
@@ -37,7 +72,6 @@ export default function MarketLayout({ active, items, subItems = [], children })
       return next;
     });
 
-    // If expanding and an apiEndpoint is available and we don't have cached subitems, fetch them.
     const willExpand = !open.has(to);
     if (willExpand && it.apiEndpoint && !subItemsMap[it.key]) {
       if (acRef.current) acRef.current.abort();
@@ -66,32 +100,43 @@ export default function MarketLayout({ active, items, subItems = [], children })
     }
   };
 
+  const baseItems = items || fetchedItems || [];
+
   const itemsWithChildren = baseItems.map((it) => {
-    // Normalize item keys
-    const key = it.key || (it.to ? it.to : it.label?.toLowerCase().replace(/\s+/g, "-"));
+    const key =
+      it.key || (it.to ? it.to : it.label?.toLowerCase().replace(/\s+/g, "-"));
     const normalized = { key, ...it };
-    // Compute children: prefer top-level `subItems` prop (global), otherwise per-item fetched children
-    const itemChildren = (subItems && subItems.length) ? subItems : subItemsMap[key];
+    const itemChildren =
+      subItems && subItems.length ? subItems : subItemsMap[key];
     if (!itemChildren || !itemChildren.length) return normalized;
-    const isActiveCategory = (normalized.to === active) || (active && active.startsWith(normalized.to));
-    const isExpanded = isActiveCategory || open.has(normalized.to || normalized.key);
+    const isActiveCategory =
+      normalized.to === active || (active && active.startsWith(normalized.to));
+    const isExpanded =
+      isActiveCategory || open.has(normalized.to || normalized.key);
     return isExpanded ? { ...normalized, children: itemChildren } : normalized;
   });
 
   return (
     <div className="grid gap-8 lg:grid-cols-12">
       <aside className="lg:col-span-3">
-        <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">Market Data</div>
+        <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+          Market Data
+        </div>
 
         <div className="mt-3">
           <div className="bg-white rounded-md border border-slate-100 overflow-hidden">
             {itemsWithChildren.map((it, idx) => {
               const identifier = it.to || it.key;
-              const isActiveCategory = it.to === active || (active && it.to && active.startsWith(it.to));
+              const isActiveCategory =
+                it.to === active ||
+                (active && it.to && active.startsWith(it.to));
               const isExpanded = isActiveCategory || open.has(it.to || it.key);
 
               return (
-                <div key={identifier} className={idx === 0 ? "" : "border-t border-slate-100"}>
+                <div
+                  key={identifier}
+                  className={idx === 0 ? "" : "border-t border-slate-100"}
+                >
                   <div className="flex items-center justify-between">
                     {it.to ? (
                       <NavLink
@@ -101,7 +146,7 @@ export default function MarketLayout({ active, items, subItems = [], children })
                             "flex-1 block px-4 py-2 text-sm truncate transition-colors",
                             isActive || isActiveCategory
                               ? "bg-slate-100 text-slate-900 font-semibold"
-                              : "text-slate-700 hover:bg-slate-50"
+                              : "text-slate-700 hover:bg-slate-50",
                           )
                         }
                       >
@@ -115,7 +160,9 @@ export default function MarketLayout({ active, items, subItems = [], children })
                         onClick={() => toggle(it)}
                         className={clsx(
                           "flex-1 text-left px-4 py-2 text-sm truncate transition-colors",
-                          isActiveCategory ? "bg-slate-100 text-slate-900 font-semibold" : "text-slate-700 hover:bg-slate-50"
+                          isActiveCategory
+                            ? "bg-slate-100 text-slate-900 font-semibold"
+                            : "text-slate-700 hover:bg-slate-50",
                         )}
                       >
                         <span className="flex items-center justify-between">
@@ -136,7 +183,7 @@ export default function MarketLayout({ active, items, subItems = [], children })
                       <span
                         className={clsx(
                           "text-xs transition-transform inline-block",
-                          isExpanded ? "rotate-90" : ""
+                          isExpanded ? "rotate-90" : "",
                         )}
                       >
                         →
@@ -154,7 +201,9 @@ export default function MarketLayout({ active, items, subItems = [], children })
                             className={({ isActive }) =>
                               clsx(
                                 "text-xs truncate px-2 py-1 rounded-sm transition-colors",
-                                isActive ? "text-slate-900 font-medium" : "text-slate-600 hover:bg-slate-50"
+                                isActive
+                                  ? "text-slate-900 font-medium"
+                                  : "text-slate-600 hover:bg-slate-50",
                               )
                             }
                           >
