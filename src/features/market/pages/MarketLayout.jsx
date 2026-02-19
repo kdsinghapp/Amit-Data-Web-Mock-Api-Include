@@ -118,7 +118,7 @@ export default function MarketLayout({
 
   return (
     <div className="grid gap-8 lg:grid-cols-12">
-      <aside className="lg:col-span-3">
+      <aside className="lg:col-span-2">
         <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">
           Market Data
         </div>
