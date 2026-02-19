@@ -23,7 +23,6 @@ import CheckoutSuccess from "../features/checkout/pages/CheckoutSuccess.jsx";
 import MarketEquities from "../features/market/pages/MarketEquities.jsx";
 import MarketFutures from "../features/market/pages/MarketFutures.jsx";
 import MarketForex from "../features/market/pages/MarketForex.jsx";
-import MarketPlaceholder from "../features/market/pages/MarketPlaceholder.jsx";
 import MarketOption from "../features/market/pages/MarketOption.jsx";
 
 import GlobalFundamentals from "../features/reference/pages/GlobalFundamentals.jsx";
@@ -69,10 +68,6 @@ export default function App() {
         <Route path="/options" element={<MarketOption />} />
         <Route path="/futures" element={<MarketFutures />} />
         <Route path="/indices" element={<MarketIndices />} />
-        <Route path="/data/market/equities/:regionKey" element={<MarketEquities />} />
-        <Route path="/data/market/futures/:regionKey" element={<MarketFutures />} />
-        <Route path="/data/market/:category" element={<MarketPlaceholder />} />
-        <Route path="/data/market/:category/:regionKey" element={<MarketPlaceholder />} />
 
         {/* Data -> Reference */}
         <Route path="/data/reference/fundamentals" element={<GlobalFundamentals />} />
