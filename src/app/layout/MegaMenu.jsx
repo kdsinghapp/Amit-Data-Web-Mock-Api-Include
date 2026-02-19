@@ -75,10 +75,23 @@ export default function MegaMenu({ open, onClose, items }) {
       onMouseLeave={onClose}
       aria-hidden={!open}
     >
-      <div className="mx-auto max-w-6xl bg-blue-950/95 text-slate-100 rounded-md shadow-xl border border-white/5 overflow-hidden">
-        <div className="flex">
-          {/* Left column: categories */}
-          <div className="w-64 bg-blue-900/80 border-r border-white/5 p-4">
+      <div className="mx-auto max-w-6xl bg-[#061426]/95 text-slate-100 rounded-2xl shadow-xl border border-white/5 overflow-hidden">
+        <div className="grid grid-cols-3">
+          {/* Left column: description */}
+          <div className="p-8 border-r border-white/5 bg-gradient-to-b from-[#07102a] to-transparent">
+            <div className="flex items-start gap-4">
+              <div>
+                <div className="text-lg font-semibold text-slate-100">Data</div>
+                <p className="mt-3 text-sm text-slate-300 max-w-xs">
+                  Discover a range of reliable and comprehensive financial data
+                  services with ultra-low latency APIs and historical replay.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Middle column: categories */}
+          <div className="p-6 border-r border-white/5">
             <div className="text-xs uppercase text-slate-300 mb-3">Data</div>
             <ul className="space-y-2">
               {(items || []).map((it) => (
@@ -87,14 +100,24 @@ export default function MegaMenu({ open, onClose, items }) {
                     type="button"
                     onMouseEnter={() => handleHover(it)}
                     className={
-                      "flex w-full items-center justify-between rounded-md px-3 py-2 text-sm transition " +
+                      "flex w-full items-center justify-between rounded-md px-4 py-3 text-sm transition " +
                       (activeKey === it.key
-                        ? "bg-orange-500 text-white font-semibold shadow-sm"
+                        ? "bg-orange-500/90 text-white font-semibold shadow-md"
                         : "text-slate-200 hover:bg-white/5")
                     }
                   >
-                    <span>{it.label}</span>
-                    <span className={activeKey === it.key ? "text-white/90" : "text-slate-400"}>→</span>
+                    <span className="flex items-center gap-3">
+                      <span className="text-sm">{it.label}</span>
+                    </span>
+                    <span
+                      className={
+                        activeKey === it.key
+                          ? "text-white/90"
+                          : "text-slate-400"
+                      }
+                    >
+                      →
+                    </span>
                   </button>
                 </li>
               ))}
@@ -102,19 +125,27 @@ export default function MegaMenu({ open, onClose, items }) {
           </div>
 
           {/* Right column: subitems */}
-          <div className="flex-1 p-6">
+          <div className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-xs uppercase text-slate-300"> {activeLabel || "Select"} </div>
-                <div className="text-lg font-semibold mt-1 text-slate-100">{activeLabel || ""}</div>
+                <div className="text-xs uppercase text-slate-300">
+                  {activeLabel || "Select"}
+                </div>
+                <div className="text-lg font-semibold mt-1 text-slate-100">
+                  {activeLabel || ""}
+                </div>
               </div>
             </div>
 
             <div className="mt-6">
-              {loading && <div className="text-sm text-slate-400">Loading…</div>}
+              {loading && (
+                <div className="text-sm text-slate-400">Loading…</div>
+              )}
 
               {!loading && (!subItems || subItems.length === 0) && (
-                <div className="text-sm text-slate-400">Hover a category on the left to see details</div>
+                <div className="text-sm text-slate-400">
+                  Hover a category in the center to see details
+                </div>
               )}
 
               {!loading && subItems && subItems.length > 0 && (
@@ -126,10 +157,21 @@ export default function MegaMenu({ open, onClose, items }) {
                       onClick={onClose}
                       className="block rounded-md border border-white/5 px-4 py-3 bg-transparent hover:bg-white/3 transition"
                     >
-                      <div className="font-medium text-slate-100">{s.label}</div>
+                      <div className="font-medium text-slate-100">
+                        {s.label}
+                      </div>
                       <div className="text-xs text-slate-300 mt-1">Explore</div>
                     </Link>
                   ))}
+                  <div className="col-span-2 mt-2">
+                    <Link
+                      to="#"
+                      onClick={onClose}
+                      className="text-orange-400 hover:underline text-sm"
+                    >
+                      Explore All →
+                    </Link>
+                  </div>
                 </div>
               )}
             </div>
