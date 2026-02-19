@@ -39,6 +39,7 @@ import CoverageUS from "../features/coverage/pages/CoverageUS.jsx";
 import CoveragePlaceholder from "../features/coverage/pages/CoveragePlaceholder.jsx";
 import SupportPage from "../pages/Support.jsx";
 import CompanyPage from "../pages/Company.jsx";
+import MarketIndices from "../features/market/pages/MarketIndices.jsx";
 
 export default function App() {
   return (
@@ -65,10 +66,11 @@ export default function App() {
         {/* Data -> Market */}
         <Route path="/equity" element={<MarketEquities />} />
         <Route path="/forex" element={<MarketForex />} />
-        <Route path="/data/market/equities/:regionKey" element={<MarketEquities />} />
-        <Route path="/futures" element={<MarketFutures />} />
-        <Route path="/data/market/futures/:regionKey" element={<MarketFutures />} />
         <Route path="/options" element={<MarketOption />} />
+        <Route path="/futures" element={<MarketFutures />} />
+        <Route path="/indices" element={<MarketIndices />} />
+        <Route path="/data/market/equities/:regionKey" element={<MarketEquities />} />
+        <Route path="/data/market/futures/:regionKey" element={<MarketFutures />} />
         <Route path="/data/market/:category" element={<MarketPlaceholder />} />
         <Route path="/data/market/:category/:regionKey" element={<MarketPlaceholder />} />
 
