@@ -6,6 +6,7 @@ import clsx from "clsx";
 import MegaMenu from "./MegaMenu.jsx";
 import { useCart } from "../../data/cart.jsx";
 import { useBillingRegion } from "../../data/billingRegion.jsx";
+import { API_BASE_URL } from "../../config/env.js";
 
 function useClickOutside(ref, onOutside) {
   useEffect(() => {
@@ -18,7 +19,7 @@ function useClickOutside(ref, onOutside) {
   }, [ref, onOutside]);
 }
 
-const MENU_URL = "http://localhost:3001/menu";
+const MENU_URL = API_BASE_URL;
 
 function getTabLabel(tabKey, tabObj) {
   return (
