@@ -1,6 +1,3 @@
-// src/api/platformApi.js
-// All backend endpoints used by the UI (Postman mock or real API)
-
 import { get } from "./http.js";
 
 function withQuery(path, params) {

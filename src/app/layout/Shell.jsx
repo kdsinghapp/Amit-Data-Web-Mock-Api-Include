@@ -14,9 +14,7 @@ export default function Shell({ children }) {
       {!apiOk && (
         <div className="mx-auto max-w-6xl px-4 pt-4">
           <div className="rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 text-sm text-orange-900">
-            <b>API not configured.</b> Create a <code>.env</code> file in the project root and set{" "}
-            <code>VITE_API_BASE_URL</code> to your Postman Mock URL. Then restart <code>npm run dev</code>.
-          </div>
+            <b>API not configured.</b> Set <code>api.baseUrl</code> inside <code>src/config/start_page.yaml</code> (example: <code>http://localhost:3001</code>) and restart <code>npm run dev</code>.</div>
         </div>
       )}
 
