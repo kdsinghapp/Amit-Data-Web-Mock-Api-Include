@@ -75,23 +75,30 @@ export default function MegaMenu({ open, onClose, items }) {
       onMouseLeave={onClose}
       aria-hidden={!open}
     >
-      <div className="mx-auto max-w-6xl bg-[#061426]/95 text-slate-100 rounded-2xl shadow-xl border border-white/5 overflow-hidden">
-        <div className="grid grid-cols-3">
+      <div className="mx-auto max-w-7xl text-slate-100 rounded-2xl shadow-xl border border-white/5 overflow-hidden"
+           style={{ background: "linear-gradient(180deg, rgba(6,20,38,0.95), rgba(6,20,38,0.95) 100%)" }}>
+        <div
+          className="grid"
+          style={{ gridTemplateColumns: "1.2fr 0.9fr 1fr" }}
+        >
           {/* Left column: description */}
-          <div className="p-8 border-r border-white/5 bg-gradient-to-b from-[#07102a] to-transparent">
+          <div className="p-8 lg:p-10 border-r border-white/5 bg-[#061026] rounded-l-2xl">
             <div className="flex items-start gap-4">
               <div>
-                <div className="text-lg font-semibold text-slate-100">Data</div>
-                <p className="mt-3 text-sm text-slate-300 max-w-xs">
-                  Discover a range of reliable and comprehensive financial data
-                  services with ultra-low latency APIs and historical replay.
+                <div className="text-2xl font-semibold text-slate-100">
+                  Data
+                </div>
+                <p className="mt-3 text-sm text-slate-300 max-w-xs leading-relaxed">
+                  Discover a range of reliable and comprehensive financial
+                  data services with ultra-low latency APIs and historical
+                  replay.
                 </p>
               </div>
             </div>
           </div>
 
           {/* Middle column: categories */}
-          <div className="p-6 border-r border-white/5">
+          <div className="p-6 lg:p-8 border-r border-white/5 bg-[#071226]">
             <div className="text-xs uppercase text-slate-300 mb-3">Data</div>
             <ul className="space-y-2">
               {(items || []).map((it) => (
@@ -102,7 +109,7 @@ export default function MegaMenu({ open, onClose, items }) {
                     className={
                       "flex w-full items-center justify-between rounded-md px-4 py-3 text-sm transition " +
                       (activeKey === it.key
-                        ? "bg-orange-500/90 text-white font-semibold shadow-md"
+                        ? "bg-[#081827] text-orange-400 font-semibold shadow-inner border-l-4 border-orange-500"
                         : "text-slate-200 hover:bg-white/5")
                     }
                   >
@@ -111,9 +118,7 @@ export default function MegaMenu({ open, onClose, items }) {
                     </span>
                     <span
                       className={
-                        activeKey === it.key
-                          ? "text-white/90"
-                          : "text-slate-400"
+                        activeKey === it.key ? "text-orange-300" : "text-slate-400"
                       }
                     >
                       →
@@ -125,11 +130,11 @@ export default function MegaMenu({ open, onClose, items }) {
           </div>
 
           {/* Right column: subitems */}
-          <div className="p-6">
+          <div className="p-6 lg:p-8 bg-[#061427] rounded-r-2xl">
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-xs uppercase text-slate-300">
-                  {activeLabel || "Select"}
+                  {activeLabel ? "Market Data" : "Select"}
                 </div>
                 <div className="text-lg font-semibold mt-1 text-slate-100">
                   {activeLabel || ""}
@@ -138,9 +143,7 @@ export default function MegaMenu({ open, onClose, items }) {
             </div>
 
             <div className="mt-6">
-              {loading && (
-                <div className="text-sm text-slate-400">Loading…</div>
-              )}
+              {loading && <div className="text-sm text-slate-400">Loading…</div>}
 
               {!loading && (!subItems || subItems.length === 0) && (
                 <div className="text-sm text-slate-400">
@@ -149,21 +152,21 @@ export default function MegaMenu({ open, onClose, items }) {
               )}
 
               {!loading && subItems && subItems.length > 0 && (
-                <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-3">
                   {subItems.map((s) => (
                     <Link
                       key={s.key}
                       to={s.to}
                       onClick={onClose}
-                      className="block rounded-md border border-white/5 px-4 py-3 bg-transparent hover:bg-white/3 transition"
+                      className="flex items-center justify-between rounded-md px-4 py-3 bg-transparent hover:bg-white/3 transition border border-transparent hover:border-white/6"
                     >
                       <div className="font-medium text-slate-100">
                         {s.label}
                       </div>
-                      <div className="text-xs text-slate-300 mt-1">Explore</div>
+                      <div className="text-sm text-slate-300">→</div>
                     </Link>
                   ))}
-                  <div className="col-span-2 mt-2">
+                  <div className="pt-2">
                     <Link
                       to="#"
                       onClick={onClose}
