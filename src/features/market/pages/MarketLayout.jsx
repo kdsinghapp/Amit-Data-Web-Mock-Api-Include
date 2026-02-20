@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import clsx from "clsx";
+import { API_BASE_URL } from "../../../config/env.js";
 
 export default function MarketLayout({
   active,
@@ -10,8 +11,8 @@ export default function MarketLayout({
 }) {
   const [open, setOpen] = useState(() => new Set());
   const [subItemsMap, setSubItemsMap] = useState(() => ({}));
-  const acRef = useRef(null); // used for subitems fetches
-  const itemsAcRef = useRef(null); // used for top-level items fetch
+  const acRef = useRef(null);
+  const itemsAcRef = useRef(null);
   const [fetchedItems, setFetchedItems] = useState(null);
 
   useEffect(() => {
@@ -27,17 +28,31 @@ export default function MarketLayout({
     };
   }, []);
 
-  // Fetch top-level market items from API when `items` prop not provided
   useEffect(() => {
     if (items) return;
-    // avoid refetch if already fetched
     if (fetchedItems !== null) return;
 
-    const endpoint = "http://localhost:3001/business-marketdata";
     const ac = new AbortController();
     itemsAcRef.current = ac;
 
-    fetch(endpoint, { signal: ac.signal })
+    fetch(API_BASE_URL, { signal: ac.signal })
+      .then((res) => res.json())
+      .then((json) => {
+        const businessData = json?.tabs?.Business?.Data;
+        if (!businessData || !businessData.apiEndpoint) {
+          throw new Error("Business Data API endpoint not found");
+        }
+        return fetch(businessData.apiEndpoint, { signal: ac.signal });
+      })
+      .then((res) => res.json())
+      .then((json) => {
+        const marketDataEndpoint = json?.Data?.["Market Data"]?.apiEndpoint;
+        if (!marketDataEndpoint) {
+          throw new Error("Market Data API endpoint not found");
+        }
+
+        return fetch(marketDataEndpoint, { signal: ac.signal });
+      })
       .then((res) => res.json())
       .then((json) => {
         const entries = json?.Data || json?.data || json || {};

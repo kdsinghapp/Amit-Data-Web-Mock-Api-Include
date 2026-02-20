@@ -1,6 +1,6 @@
-// pages/MarketIndices.jsx (your page becomes very small)
 import React, { useEffect, useState } from "react";
 import DynamicKitPage from "./DynamicKit";
+import { API_BASE_URL } from "../../../config/env.js";
 
 export default function Indices() {
   const [data, setData] = useState(null);
@@ -12,8 +12,35 @@ export default function Indices() {
     setLoading(true);
     setError(null);
 
-    fetch("http://localhost:3001/business-Indices", { signal: ac.signal })
-      .then((r) => r.json())
+    fetch(API_BASE_URL, { signal: ac.signal })
+      .then((res) => res.json())
+      .then((json) => {
+        const businessData = json?.tabs?.Business?.Data;
+        if (!businessData || !businessData.apiEndpoint) {
+          throw new Error('Business Data API endpoint not found');
+        }
+        
+        return fetch(businessData.apiEndpoint, { signal: ac.signal });
+      })
+      .then((res) => res.json())
+      .then((json) => {
+        const marketDataEndpoint = json?.Data?.["Market Data"]?.apiEndpoint;
+        if (!marketDataEndpoint) {
+          throw new Error('Market Data API endpoint not found');
+        }
+        
+        return fetch(marketDataEndpoint, { signal: ac.signal });
+      })
+      .then((res) => res.json())
+      .then((json) => {
+        const indicesEndpoint = json?.data?.Indices?.apiEndpoint;
+        if (!indicesEndpoint) {
+          throw new Error('Indices API endpoint not found');
+        }
+        
+        return fetch(indicesEndpoint, { signal: ac.signal });
+      })
+      .then((res) => res.json())
       .then((json) => {
         setData(json?.IndicesPage || json);
       })
@@ -34,7 +61,7 @@ export default function Indices() {
     <DynamicKitPage
       pageTitle={data?.pageTitle}
       pageContent={data?.PageContent || {}}
-      pageConfig={data?.Indices || data} // works even if shape changes
+      pageConfig={data?.Indices || data} 
     />
   );
 }
