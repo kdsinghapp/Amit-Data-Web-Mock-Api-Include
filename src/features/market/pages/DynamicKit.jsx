@@ -298,6 +298,10 @@ export function DynamicFormRunner({ form }) {
   const fields = form?.Inputfields || {};
   const apiEndpoint = form?.apiEndpoint;
   const method = String(form?.method || "POST").toUpperCase(); // allow GET/POST in JSON
+  
+  // Dynamic styling from API
+  const backgroundColor = form?.backgroundColor || "white";
+  const inputsPerRow = form?.inputsPerRow || 1; // Default to 1 input per row
 
   const initialValues = useMemo(() => {
     return Object.keys(fields).reduce((acc, k) => {
@@ -367,7 +371,7 @@ export function DynamicFormRunner({ form }) {
   }
 
   return (
-    <div className="page-surface p-6">
+    <div className="page-surface p-6" style={{ backgroundColor }}>
       <div className="flex items-center justify-between mb-4">
         <div>
           <div className="text-sm font-semibold text-slate-900">
@@ -387,19 +391,21 @@ export function DynamicFormRunner({ form }) {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-3">
-        {Object.keys(fields).map((k) => {
-          const f = fields[k] || {};
-          const name = f.name || k;
-          return (
-            <FieldInput
-              key={k}
-              field={f}
-              name={name}
-              value={values[name]}
-              onChange={handleChange}
-            />
-          );
-        })}
+        <div className={`grid gap-3`} style={{ gridTemplateColumns: `repeat(${inputsPerRow}, 1fr)` }}>
+          {Object.keys(fields).map((k) => {
+            const f = fields[k] || {};
+            const name = f.name || k;
+            return (
+              <FieldInput
+                key={k}
+                field={f}
+                name={name}
+                value={values[name]}
+                onChange={handleChange}
+              />
+            );
+          })}
+        </div>
       </form>
 
       <div className="mt-4">
@@ -433,9 +439,12 @@ export function DynamicFormRunner({ form }) {
 /* ------------------------- editor preview ------------------------- */
 export function DynamicEditorPreview({ editor }) {
   const [code, setCode] = useState("// sample editor, no execution");
+  
+  // Dynamic styling from API
+  const backgroundColor = editor?.backgroundColor || "white";
 
   return (
-    <div className="page-surface p-4">
+    <div className="page-surface p-4" style={{ backgroundColor }}>
       <div className="text-sm font-semibold mb-2">
         {editor?.title || editor?.path || "Editor"}
       </div>
